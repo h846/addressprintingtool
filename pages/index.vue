@@ -2,18 +2,21 @@
 <template>
   <v-row justify="center">
     <v-col id="custtable" cols="12">
-      <v-card>
+      <v-card width="700" class="mx-auto">
         <v-card-text>
           <v-row justify="center">
-            <v-col cols="3">
+            <v-col cols="12">
               <v-text-field
                 v-model="cust_id"
+                label="顧客番号を入力"
                 outlined
+                :error="showError"
+                :error-messages="errMsg"
                 @keyup.enter="custSearch()"
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row justify="center">
             <v-col cols="12">
               <v-simple-table v-show="showTable">
                 <template #default>
@@ -41,16 +44,14 @@
                   </tbody>
                 </template>
               </v-simple-table>
-              <div v-show="showError">
-                この番号の顧客は見つかりませんでした。
-              </div>
             </v-col>
           </v-row>
         </v-card-text>
       </v-card>
     </v-col>
+
     <v-col cols="12">
-      <Print :cust-list="customers" @printing="printing()" />
+      <Print :cust-list="customers" />
     </v-col>
   </v-row>
 </template>
@@ -63,6 +64,7 @@ export default {
       cust_id: '',
       showTable: false,
       showError: false,
+      errMsg: null,
       customers: [],
       csr: { id: null, userName: null, name: null },
     }
@@ -100,6 +102,22 @@ export default {
           console.log(e)
         })
     },
+    validation(val) {
+      this.showError = false
+      if (val.data.length <= 0) {
+        this.showError = true
+        this.errMsg = '無効な顧客番号です。'
+        return false
+      } else if (this.cust_id === '') {
+        this.showError = true
+        this.errMsg = '顧客番号を入力してください'
+        return false
+      } else if (/\D+/.test(this.cust_id)) {
+        this.showError = true
+        this.errMsg = '半角数字を入力してください'
+        return false
+      }
+    },
     async custSearch() {
       this.showTable = true
       // Customer Search and add Record to DB
@@ -108,10 +126,8 @@ export default {
           cust_id: this.cust_id,
         })
         .then((res) => {
-          console.log(res.data)
-          this.showError = false
-          if (res.data.length <= 0) {
-            this.showError = true
+          // console.log(res.data)
+          if (this.validation(res) === false) {
             return
           }
           const cust = res.data[0]
@@ -137,6 +153,7 @@ export default {
             keys.push(i)
             vals.push(`'${custHash[i]}'`)
           }
+
           const db = 'CSNET/test/accapi/LabelPrint.accdb'
           const sql = `INSERT INTO CUSTLABELforFutou(${keys.join(
             ','
@@ -148,7 +165,7 @@ export default {
               sql,
             })
             .then((res) => {
-              console.log(res.status)
+              // console.log(res.status)
             })
             .catch((e) => {
               console.log(e)

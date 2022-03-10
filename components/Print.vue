@@ -5,7 +5,26 @@
       <div>{{ item.Add1 + item.Add2 + item.Add3 }}</div>
       <div>{{ item.CUST_NAME }} 様</div>
     </div>
-    <v-btn @click="handlePrint()">印刷</v-btn>
+    <div class="mb-5" style="text-align: center">
+      <v-btn
+        color="red darken-2"
+        dark
+        x-large
+        width="700"
+        @click="handlePrint()"
+        >印刷する</v-btn
+      >
+    </div>
+    <div class="mb-5" style="text-align: center">
+      <v-btn
+        color="red darken-2"
+        dark
+        x-large
+        width="700"
+        @click="printCompleated()"
+        >印刷済みにする</v-btn
+      >
+    </div>
   </div>
 </template>
 
@@ -19,10 +38,13 @@ export default {
       },
     },
   },
+
   methods: {
     handlePrint() {
+      // Disp print page
       window.print()
     },
+    printCompleated() {},
   },
 }
 </script>
@@ -38,6 +60,7 @@ export default {
     display: none;
   }
   .sheet {
+    display: block;
     padding-top: 10mm;
   }
 }
@@ -46,12 +69,7 @@ export default {
 @media screen {
   /* mm単位で指定しているけど、vueコンポ側はpx単位なので、無理にmmにしなくてもいいかも。解像度の違いでハマるかも */
   .sheet {
-    width: 200mm;
-    //min-height: 296mm; /* 設定しなくてもいいかも。あまり印刷画面に似せすぎると、些細な違いがバグに見えてしまう */
-    margin: 5mm;
-    padding: 5mm;
-    background: white;
-    box-shadow: 0 0.5mm 2mm rgba(0, 0, 0, 0.3);
+    display: none;
   }
 }
 </style>
