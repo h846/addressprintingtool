@@ -3,7 +3,7 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   router: {
     // パスの設定。本番環境で動かすのに必要
-    base: process.env.NODE_ENV === 'development' ? '/' : '/CSNet/test/accapi',
+    base: process.env.NODE_ENV === 'development' ? '/' : '/csnet/test/accapi',
   },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -49,6 +49,10 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
   ],
+
+  dayjs: {
+    defaultTimeZone: 'Asia/Tokyo',
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {

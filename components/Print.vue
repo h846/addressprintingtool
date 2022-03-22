@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   props: {
     custList: {
@@ -37,6 +38,10 @@ export default {
         return []
       },
     },
+    csrId: {
+      type: String,
+      default: '',
+    },
   },
 
   methods: {
@@ -44,7 +49,24 @@ export default {
       // Disp print page
       window.print()
     },
-    printCompleated() {},
+    async printCompleated() {
+      this.$store.commit('toggleLoading', true)
+      const db = 'CSNET/test/accapi/LabelPrint.accdb'
+      const sql =
+        "UPDATE CUSTLABELforFutou SET PRINT_FLAG = 1, PRINT_CSR = '" +
+        this.csrId +
+        "',PRINT_DATE='" +
+        this.$dayjs().format('YYYY-MM-DD HH:mm:ss') +
+        "' WHERE PRINT_FLAG = 0"
+      await axios
+        .post('http://lejnet/api/accdb', {
+          db,
+          sql,
+        })
+        .then((res) => {
+          this.$emit('printed')
+        })
+    },
   },
 }
 </script>

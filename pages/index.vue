@@ -51,7 +51,11 @@
     </v-col>
 
     <v-col cols="12">
-      <Print :cust-list="customers" />
+      <Print
+        :cust-list="customers"
+        :csr-id="csr.userID"
+        @printed="getUnPrintedList"
+      />
     </v-col>
   </v-row>
 </template>
@@ -66,7 +70,7 @@ export default {
       showError: false,
       errMsg: null,
       customers: [],
-      csr: { id: null, userName: null, name: null },
+      csr: { userName: null, userID: null, realName: null },
     }
   },
   mounted() {
@@ -84,26 +88,24 @@ export default {
           },
         })
         .then((res) => {
+          this.$store.commit('toggleLoading', true)
           const data = res.data.filter((val) => {
             return val.PRINT_FLAG === 0
           })
           this.showTable = true
-          if (data.length > 0) {
-            this.customers = []
-            this.customers.push(...data)
-
-            console.log(this.customers)
-          } else {
-            this.customers = []
-            this.showTable = false
-          }
+          this.customers = JSON.parse(JSON.stringify(data))
+          console.log(this.customers)
         })
         .catch((e) => {
           console.log(e)
         })
+        .finally(() => {
+          this.$store.commit('toggleLoading', false)
+        })
     },
     validation(val) {
       this.showError = false
+      this.errMsg = null
       if (val.data.length <= 0) {
         this.showError = true
         this.errMsg = '無効な顧客番号です。'
@@ -120,6 +122,7 @@ export default {
     },
     async custSearch() {
       this.showTable = true
+      this.$store.commit('toggleLoading', true)
       // Customer Search and add Record to DB
       await axios
         .post('http://lejnet/api/oracle/customer', {
@@ -128,6 +131,7 @@ export default {
         .then((res) => {
           // console.log(res.data)
           if (this.validation(res) === false) {
+            this.$store.commit('toggleLoading', false)
             return
           }
           const cust = res.data[0]
@@ -142,7 +146,7 @@ export default {
           custHash.Add2 = this.trim(cust.CM_BILL_ADDRESS2)
           custHash.Add3 = this.trim(cust.CM_BILL_ADDRESS3)
           custHash.Add4 = this.trim(cust.CM_BILL_ADDRESS4)
-          custHash.INPUT_CSR = this.csr.name
+          custHash.INPUT_CSR = this.csr.realName
           custHash.INPUT_DATE = this.$dayjs().format('YYYY-MM-DD HH:mm:ss')
           custHash.PRINT_FLAG = 0
 
@@ -164,18 +168,20 @@ export default {
               db,
               sql,
             })
-            .then((res) => {
+            .then(() => {
               // console.log(res.status)
+              this.getUnPrintedList()
+              this.$store.commit('toggleLoading', false)
             })
             .catch((e) => {
               console.log(e)
             })
 
-          this.getUnPrintedList()
           console.log(this.customers)
         })
     },
     removeCust(id) {
+      this.$store.commit('toggleLoading', true)
       const db = 'CSNET/test/accapi/LabelPrint.accdb'
       const sql = `DELETE FROM CUSTLABELforFutou WHERE ID = ${id}`
       axios
@@ -189,6 +195,9 @@ export default {
         .catch((e) => {
           console.log(e)
         })
+        .finally(() => {
+          this.$store.commit('toggleLoading', false)
+        })
     },
     trim(str) {
       return str === 'null' ? '' : String(str).trim()
@@ -200,9 +209,9 @@ export default {
         })
         .then((res) => {
           const ary = String(res.data).split('|')
-          this.csr.id = ary[0] || ''
-          this.csr.userName = ary[1] || ''
-          this.csr.name = ary[2] || ''
+          this.csr.userName = ary[0] || ''
+          this.csr.userID = ary[1] || ''
+          this.csr.realName = ary[2] || ''
 
           console.log(this.csr)
         })

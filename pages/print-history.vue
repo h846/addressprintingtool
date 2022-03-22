@@ -18,6 +18,12 @@
           <template #[`item.INPUT_CSR`]="{ item }">
             {{ item.PRINT_CSR + ' ' + item.INPUT_CSR }}
           </template>
+          <template #[`item.INPUT_DATE`]="{ item }">
+            {{ dateFmt(item.INPUT_DATE) }}
+          </template>
+          <template #[`item.PRINT_DATE`]="{ item }">{{
+            dateFmt(item.PRINT_DATE)
+          }}</template>
         </v-data-table>
       </v-card>
     </v-col>
@@ -59,6 +65,10 @@ export default {
   mounted() {
     console.log(this.$dayjs().format('YYYY-MM-DD'))
   },
-  methods: {},
+  methods: {
+    dateFmt(d) {
+      return this.$dayjs(d).format('YYYY/MM/DD HH:mm:ss')
+    },
+  },
 }
 </script>
