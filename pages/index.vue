@@ -29,7 +29,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in customers" :key="index">
+                    <tr v-for="(item, index) in customersList" :key="index">
                       <td>{{ item.CUST_NUM }}</td>
                       <td>
                         {{ item.CUST_NAME }}
@@ -49,13 +49,19 @@
         </v-card-text>
       </v-card>
     </v-col>
-
-    <v-col cols="12">
-      <Print
-        :cust-list="customers"
-        :csr-id="csr.userID"
-        @printed="getUnPrintedList"
-      />
+    <v-col cols="6">
+      <div class="mb-5" style="text-align: center">
+        <v-btn class="label-prt" color="red darken-2" dark to="/labelPrint" nuxt
+          >ラベル印刷する</v-btn
+        >
+      </div>
+    </v-col>
+    <v-col cols="6">
+      <div class="mb-5" style="text-align: center">
+        <v-btn class="form-prt" color="red darken-2" dark to="ordFormPrint" nuxt
+          >オーダーフォーム印刷する</v-btn
+        >
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -69,16 +75,29 @@ export default {
       showTable: false,
       showError: false,
       errMsg: null,
-      customers: [],
-      csr: { userName: null, userID: null, realName: null },
     }
+  },
+  computed: {
+    customersList() {
+      return this.$store.state.customers
+    },
   },
   mounted() {
     this.getCSR()
     this.getUnPrintedList()
     console.log(this.$dayjs().format('YYYY-MM-DD'))
   },
+
   methods: {
+    handlePrint(type) {
+      // this.currentCompo = type
+      if (type === 'label') {
+        this.currentCompo = 'label'
+      } else if (type === 'order-form') {
+        this.currentCompo = 'order-form'
+      }
+      window.print()
+    },
     async getUnPrintedList() {
       await axios
         .get('http://lejnet/api/accdb', {
@@ -93,8 +112,7 @@ export default {
             return val.PRINT_FLAG === 0
           })
           this.showTable = true
-          this.customers = JSON.parse(JSON.stringify(data))
-          console.log(this.customers)
+          this.$store.commit('setCustomers', JSON.parse(JSON.stringify(data)))
         })
         .catch((e) => {
           console.log(e)
@@ -146,7 +164,7 @@ export default {
           custHash.Add2 = this.trim(cust.CM_BILL_ADDRESS2)
           custHash.Add3 = this.trim(cust.CM_BILL_ADDRESS3)
           custHash.Add4 = this.trim(cust.CM_BILL_ADDRESS4)
-          custHash.INPUT_CSR = this.csr.realName
+          custHash.INPUT_CSR = this.$store.state.csr.realName
           custHash.INPUT_DATE = this.$dayjs().format('YYYY-MM-DD HH:mm:ss')
           custHash.PRINT_FLAG = 0
 
@@ -208,12 +226,7 @@ export default {
           withCredentials: true,
         })
         .then((res) => {
-          const ary = String(res.data).split('|')
-          this.csr.userName = ary[0] || ''
-          this.csr.userID = ary[1] || ''
-          this.csr.realName = ary[2] || ''
-
-          console.log(this.csr)
+          this.$store.commit('setCSR', res.data)
         })
     },
   },
@@ -221,8 +234,10 @@ export default {
 </script>
 <style>
 @media print {
-  #custtable {
-    display: none;
+  #custtable,
+  .label-prt,
+  .form-prt {
+    display: none !important;
   }
 }
 </style>

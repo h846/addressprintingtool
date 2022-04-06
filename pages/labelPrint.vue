@@ -1,20 +1,12 @@
 <template>
   <div class="sheets">
     <div v-for="(item, index) in custList" :key="index" class="sheet">
-      <div>{{ item.POSTCODE }}</div>
+      <div>〒{{ item.POSTCODE }}</div>
       <div>{{ item.Add1 + item.Add2 + item.Add3 }}</div>
       <div>{{ item.CUST_NAME }} 様</div>
+      <div>{{ item.CUST_NUM }}</div>
     </div>
-    <div class="mb-5" style="text-align: center">
-      <v-btn
-        color="red darken-2"
-        dark
-        x-large
-        width="700"
-        @click="handlePrint()"
-        >印刷する</v-btn
-      >
-    </div>
+
     <div class="mb-5" style="text-align: center">
       <v-btn
         color="red darken-2"
@@ -31,30 +23,24 @@
 <script>
 import axios from 'axios'
 export default {
-  props: {
-    custList: {
-      type: Array,
-      default() {
-        return []
-      },
+  computed: {
+    custList() {
+      return this.$store.state.customers
     },
-    csrId: {
-      type: String,
-      default: '',
+    csr() {
+      return this.$store.state.csr
     },
   },
-
+  mounted() {
+    window.print()
+  },
   methods: {
-    handlePrint() {
-      // Disp print page
-      window.print()
-    },
     async printCompleated() {
       this.$store.commit('toggleLoading', true)
       const db = 'CSNET/test/accapi/LabelPrint.accdb'
       const sql =
         "UPDATE CUSTLABELforFutou SET PRINT_FLAG = 1, PRINT_CSR = '" +
-        this.csrId +
+        this.csr.userID +
         "',PRINT_DATE='" +
         this.$dayjs().format('YYYY-MM-DD HH:mm:ss') +
         "' WHERE PRINT_FLAG = 0"
@@ -64,7 +50,7 @@ export default {
           sql,
         })
         .then((res) => {
-          this.$emit('printed')
+          this.$router.push('/')
         })
     },
   },
@@ -83,7 +69,9 @@ export default {
   }
   .sheet {
     display: block;
-    padding-top: 10mm;
+    padding-top: 50mm;
+    // font-family: 'Klee One', cursive;
+    font-size: 20px;
   }
 }
 
