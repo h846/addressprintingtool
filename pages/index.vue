@@ -30,15 +30,13 @@
                   </thead>
                   <tbody>
                     <tr v-for="(item, index) in customersList" :key="index">
-                      <td>{{ item.CUST_NUM }}</td>
+                      <td>{{ item.CM_CUSTOMER_ID }}</td>
+                      <td>{{ item.CM_BILL_LAST }} {{ item.CM_BILL_FIRST }}</td>
                       <td>
-                        {{ item.CUST_NAME }}
+                        {{ item.CM_BILL_ADDRESS1 + item.CM_BILL_ADDRESS2 }}
                       </td>
                       <td>
-                        {{ item.Add1 + item.Add2 + item.Add3 }}
-                      </td>
-                      <td>
-                        <v-btn @click="removeCust(item.ID)">削除</v-btn>
+                        <v-btn @click="removeCust(item.ACC_ID)">削除</v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -83,6 +81,7 @@ export default {
     },
   },
   mounted() {
+    this.getCustInfo('112233')
     this.getCSR()
     this.getUnPrintedList()
     console.log(this.$dayjs().format('YYYY-MM-DD'))
@@ -99,27 +98,46 @@ export default {
       window.print()
     },
     async getUnPrintedList() {
-      await axios
-        .get('http://lejnet/api/accdb', {
-          params: {
-            db: 'CSNET/test/accapi/LabelPrint.accdb',
-            table: 'CUSTLABELforFutou',
-          },
-        })
-        .then((res) => {
-          this.$store.commit('toggleLoading', true)
-          const data = res.data.filter((val) => {
-            return val.PRINT_FLAG === 0
+      this.$store.commit('toggleLoading', true)
+      this.showTable = true
+
+      let accdata = await axios.get('http://lejnet/api/accdb', {
+        params: {
+          db: 'CSNET/test/accapi/LabelPrint.accdb',
+          table: 'CUSTLABELforFutou',
+        },
+      })
+
+      accdata = accdata.data.filter((val) => {
+        return val.PRINT_FLAG === 0
+      })
+
+      const oradata = []
+      for (const val of accdata) {
+        const data = await this.getCustInfo(val.CUST_NUM)
+        data[0].ACC_ID = val.ID
+        oradata.push(...data)
+      }
+
+      console.log(oradata)
+
+      this.$store.commit('setCustomers', JSON.parse(JSON.stringify(oradata)))
+      this.$store.commit('toggleLoading', false)
+    },
+    getCustInfo(custNum) {
+      // Get it from ORACLE
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://lejnet/api/oracle/customer', {
+            cust_id: custNum,
           })
-          this.showTable = true
-          this.$store.commit('setCustomers', JSON.parse(JSON.stringify(data)))
-        })
-        .catch((e) => {
-          console.log(e)
-        })
-        .finally(() => {
-          this.$store.commit('toggleLoading', false)
-        })
+          .then((res) => {
+            resolve(res.data)
+          })
+          .catch((err) => {
+            reject(err)
+          })
+      })
     },
     validation(val) {
       this.showError = false
@@ -158,12 +176,13 @@ export default {
           custHash.CUST_NAME = this.trim(
             `${cust.CM_BILL_LAST} ${cust.CM_BILL_FIRST}`
           )
-
+          /*
           custHash.POSTCODE = this.trim(cust.CM_ZIP)
           custHash.Add1 = this.trim(cust.CM_BILL_ADDRESS1)
           custHash.Add2 = this.trim(cust.CM_BILL_ADDRESS2)
           custHash.Add3 = this.trim(cust.CM_BILL_ADDRESS3)
           custHash.Add4 = this.trim(cust.CM_BILL_ADDRESS4)
+          */
           custHash.INPUT_CSR = this.$store.state.csr.realName
           custHash.INPUT_DATE = this.$dayjs().format('YYYY-MM-DD HH:mm:ss')
           custHash.PRINT_FLAG = 0

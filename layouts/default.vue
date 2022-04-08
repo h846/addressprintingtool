@@ -7,7 +7,7 @@
         >
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text to="print-history">印刷履歴</v-btn>
+      <v-btn color="primary" outlined to="print-history">印刷履歴</v-btn>
 
       <v-progress-linear
         :active="isLoading"

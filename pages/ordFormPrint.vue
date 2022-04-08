@@ -1,13 +1,21 @@
 <template>
   <div class="sheets">
     <div v-for="(item, index) in custList" :key="index" class="sheet">
-      <div>〒{{ item.POSTCODE }}</div>
-      <div>{{ item.Add1 + item.Add2 + item.Add3 }}</div>
-      <div>{{ item.CUST_NAME }} 様</div>
-      <div>{{ item.CUST_NUM }}</div>
+      <div>〒{{ item.CM_ZIP_KEY }}</div>
+      <div>{{ item.CM_BILL_ADDRESS1 + item.CM_BILL_ADDRESS2 }}</div>
+      <div v-if="item.CM_BILL_ADDRESS3 !== 'null'">
+        {{ item.CM_BILL_ADDRESS3 }}
+      </div>
+      <div v-if="item.CM_BILL_ADDRESS4 !== 'null'">
+        {{ item.CM_BILL_ADDRESS4 }}
+      </div>
+      <div class="mt-3">
+        {{ item.CM_BILL_LAST + ' ' + item.CM_BILL_FIRST }} 様
+      </div>
+      <div>{{ item.CM_CUSTOMER_ID }}</div>
     </div>
 
-    <div class="mb-5" style="text-align: center">
+    <div class="mt-10" style="text-align: center">
       <v-btn
         color="red darken-2"
         dark
@@ -15,6 +23,11 @@
         width="700"
         @click="printCompleated()"
         >印刷済みにする</v-btn
+      >
+    </div>
+    <div class="mt-10" style="text-align: center">
+      <v-btn color="red darken-2" dark x-large width="700" @click="goHome()"
+        >トップページに戻る</v-btn
       >
     </div>
   </div>
@@ -35,6 +48,9 @@ export default {
     window.print()
   },
   methods: {
+    goHome() {
+      this.$router.push('/')
+    },
     async printCompleated() {
       this.$store.commit('toggleLoading', true)
       const db = 'CSNET/test/accapi/LabelPrint.accdb'
@@ -50,7 +66,7 @@ export default {
           sql,
         })
         .then((res) => {
-          this.$emit('printed')
+          this.$router.push('/')
         })
     },
   },
