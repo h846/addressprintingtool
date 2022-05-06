@@ -2,7 +2,7 @@
 <template>
   <v-row justify="center">
     <v-col id="custtable" cols="12">
-      <v-card width="700" class="mx-auto">
+      <v-card width="800" class="mx-auto" elevation="5">
         <v-card-text>
           <v-row justify="center">
             <v-col cols="12">
@@ -48,17 +48,35 @@
       </v-card>
     </v-col>
     <v-col cols="6">
-      <div class="mb-5" style="text-align: center">
+      <div style="width: 200px">
         <v-btn class="label-prt" color="red darken-2" dark to="/labelPrint" nuxt
-          >ラベル印刷する</v-btn
+          >ラベル印刷</v-btn
         >
+        <div>
+          <v-btn
+            text
+            color="primary"
+            href="http://lejnet/csapp/label-print/print_label.pdf"
+            target="_blank"
+            >印刷方法</v-btn
+          >
+        </div>
       </div>
     </v-col>
     <v-col cols="6">
-      <div class="mb-5" style="text-align: center">
+      <div class="ml-auto" style="width: 200px">
         <v-btn class="form-prt" color="red darken-2" dark to="ordFormPrint" nuxt
-          >オーダーフォーム印刷する</v-btn
+          >オーダーフォーム印刷</v-btn
         >
+        <div style="text-align: left">
+          <v-btn
+            text
+            color="primary"
+            href="http://lejnet/csapp/label-print/print_orderform.pdf"
+            target="_blank"
+            >印刷方法</v-btn
+          >
+        </div>
       </div>
     </v-col>
   </v-row>

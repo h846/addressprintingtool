@@ -18,8 +18,10 @@
       ></v-progress-linear>
     </v-app-bar>
     <v-main>
-      <v-container>
-        <Nuxt />
+      <v-container fluid>
+        <div style="max-width: 800px; margin: 0 auto">
+          <Nuxt />
+        </div>
       </v-container>
     </v-main>
   </v-app>
