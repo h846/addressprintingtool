@@ -26,7 +26,7 @@
       >
     </div>
     <div class="mt-10" style="text-align: center">
-      <v-btn color="red darken-2" dark x-large width="700" @click="goHome()"
+      <v-btn color="red darken-2" dark text @click="goHome()"
         >トップページに戻る</v-btn
       >
     </div>
