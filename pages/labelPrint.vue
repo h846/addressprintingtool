@@ -74,6 +74,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import url('https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap');
 .sheet {
   page-break-after: always;
 }
@@ -85,9 +86,10 @@ export default {
   }
   .sheet {
     display: block;
-    padding-top: 50mm;
-    // font-family: 'Klee One', cursive;
-    font-size: 20px;
+    padding-top: 90mm;
+    padding-left: 50mm;
+    font-family: 'Sawarabi Mincho', serif;
+    font-size: 28px;
   }
 }
 
