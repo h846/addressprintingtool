@@ -90,6 +90,7 @@ export default {
     padding: 0;
   }
   .sheet {
+    /* mm単位で指定しているけど、vueコンポ側はpx単位なので、無理にmmにしなくてもいいかも。解像度の違いでハマるかも */
     display: block;
     margin-left: -75px;
     font-family: 'Sawarabi Mincho', serif;
@@ -99,7 +100,6 @@ export default {
 
 /* for preview */
 @media screen {
-  /* mm単位で指定しているけど、vueコンポ側はpx単位なので、無理にmmにしなくてもいいかも。解像度の違いでハマるかも */
   .sheet {
     display: none;
   }

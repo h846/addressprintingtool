@@ -8,7 +8,7 @@
             <v-col cols="12">
               <v-text-field
                 v-model="cust_id"
-                label="顧客番号を入力"
+                label="顧客番号を入力してENTER"
                 outlined
                 :error="showError"
                 :error-messages="errMsg"
