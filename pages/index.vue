@@ -25,7 +25,7 @@
                       <th>顧客番号</th>
                       <th>顧客名</th>
                       <th>住所</th>
-                      <th>削除</th>
+                      <th>編集</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -36,7 +36,11 @@
                         {{ item.CM_BILL_ADDRESS1 + item.CM_BILL_ADDRESS2 }}
                       </td>
                       <td>
-                        <v-btn @click="removeCust(item.ACC_ID)">削除</v-btn>
+                        <!-- EDIT FORM -->
+                        <the-editor />
+                        <v-icon @click="removeCust(item.ACC_ID)">
+                          mdi-delete
+                        </v-icon>
                       </td>
                     </tr>
                   </tbody>
@@ -84,7 +88,9 @@
 
 <script>
 import axios from 'axios'
+import TheEditor from '~/components/TheEditor.vue'
 export default {
+  components: { TheEditor },
   data() {
     return {
       cust_id: '',
@@ -99,22 +105,12 @@ export default {
     },
   },
   mounted() {
-    this.getCustInfo('112233')
     this.getCSR()
     this.getUnPrintedList()
-    console.log(this.$dayjs().format('YYYY-MM-DD'))
+    // console.log(this.$dayjs().format('YYYY-MM-DD'))
   },
 
   methods: {
-    handlePrint(type) {
-      // this.currentCompo = type
-      if (type === 'label') {
-        this.currentCompo = 'label'
-      } else if (type === 'order-form') {
-        this.currentCompo = 'order-form'
-      }
-      window.print()
-    },
     async getUnPrintedList() {
       this.$store.commit('toggleLoading', true)
       this.showTable = true
@@ -177,13 +173,13 @@ export default {
     async custSearch() {
       this.showTable = true
       this.$store.commit('toggleLoading', true)
-      // Customer Search and add Record to DB
+      // Customer Search and add Add to DB
       await axios
         .post('http://lejnet/api/oracle/customer', {
           cust_id: this.cust_id,
         })
         .then((res) => {
-          // console.log(res.data)
+          // Form Varidation
           if (this.validation(res) === false) {
             this.$store.commit('toggleLoading', false)
             return
@@ -194,13 +190,7 @@ export default {
           custHash.CUST_NAME = this.trim(
             `${cust.CM_BILL_LAST} ${cust.CM_BILL_FIRST}`
           )
-          /*
-          custHash.POSTCODE = this.trim(cust.CM_ZIP)
-          custHash.Add1 = this.trim(cust.CM_BILL_ADDRESS1)
-          custHash.Add2 = this.trim(cust.CM_BILL_ADDRESS2)
-          custHash.Add3 = this.trim(cust.CM_BILL_ADDRESS3)
-          custHash.Add4 = this.trim(cust.CM_BILL_ADDRESS4)
-          */
+
           custHash.INPUT_CSR = this.$store.state.csr.realName
           custHash.INPUT_DATE = this.$dayjs().format('YYYY-MM-DD HH:mm:ss')
           custHash.PRINT_FLAG = 0

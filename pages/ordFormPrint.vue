@@ -92,9 +92,8 @@ export default {
   .sheet {
     /* mm単位で指定しているけど、vueコンポ側はpx単位なので、無理にmmにしなくてもいいかも。解像度の違いでハマるかも */
     display: block;
-    margin-left: -75px;
     font-family: 'Sawarabi Mincho', serif;
-    font-size: 18px;
+    font-size: 14px;
   }
 }
 
