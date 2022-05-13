@@ -57,10 +57,33 @@
 
 <script>
 export default {
+  props: { custId: { type: Number, default: null } },
   data() {
     return {
       dialog: false,
     }
+  },
+
+  computed: {
+    customers: {
+      get() {
+        return this.$state.store.customers
+      },
+      set(value) {
+        let id
+        const list = value.map((val) => {
+          id = parseInt(val.ACC_ID)
+          if (this.custId === id) {
+          }
+          return val
+        })
+        this.$store.commit('setCustomers', list)
+      },
+    },
+  },
+
+  mounted() {
+    console.log(this.custId)
   },
 }
 </script>

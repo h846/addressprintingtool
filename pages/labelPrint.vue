@@ -86,7 +86,7 @@ export default {
   }
   .sheet {
     display: block;
-    padding-top: 50mm;
+    padding-top: 60mm;
     padding-left: 60mm;
     font-family: 'Sawarabi Mincho', serif;
     font-size: 20px;

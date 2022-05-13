@@ -10,6 +10,7 @@
                 v-model="cust_id"
                 label="顧客番号を入力してENTER"
                 outlined
+                clearable
                 :error="showError"
                 :error-messages="errMsg"
                 @keyup.enter="custSearch()"
@@ -29,7 +30,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in customersList" :key="index">
+                    <tr v-for="(item, index) in customers" :key="index">
                       <td>{{ item.CM_CUSTOMER_ID }}</td>
                       <td>{{ item.CM_BILL_LAST }} {{ item.CM_BILL_FIRST }}</td>
                       <td>
@@ -37,7 +38,7 @@
                       </td>
                       <td>
                         <!-- EDIT FORM -->
-                        <the-editor />
+                        <the-editor :cust-id="item.ACC_ID" />
                         <v-icon @click="removeCust(item.ACC_ID)">
                           mdi-delete
                         </v-icon>
@@ -100,7 +101,7 @@ export default {
     }
   },
   computed: {
-    customersList() {
+    customers() {
       return this.$store.state.customers
     },
   },
