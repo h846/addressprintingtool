@@ -4,6 +4,10 @@ export const state = () => ({
   csr:{ userName: null, userID: null, realName: null }
 })
 
+export const getters = {
+  customers: state => state.customers
+}
+
 export const mutations = {
   toggleLoading(state, boolean) {
     state.isLoading = boolean

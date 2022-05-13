@@ -136,7 +136,7 @@ export default {
 
       console.log(oradata)
 
-      this.$store.commit('setCustomers', JSON.parse(JSON.stringify(oradata)))
+      this.$store.commit('setCustomers', [...oradata])
       this.$store.commit('toggleLoading', false)
     },
     getCustInfo(custNum) {
