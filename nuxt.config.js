@@ -13,8 +13,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - accapi-sample',
-    title: 'accapi-sample',
+    titleTemplate: '%s',
+    title: 'Label Printing Tool',
     htmlAttrs: {
       lang: 'en',
     },
