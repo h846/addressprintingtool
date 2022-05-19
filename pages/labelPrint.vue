@@ -1,7 +1,7 @@
 <template>
   <div class="sheets">
     <div v-for="(item, index) in custList" :key="index" class="sheet">
-      <div>〒{{ item.CM_ZIP_KEY }}</div>
+      <div>〒{{ item.CM_ZIP }}</div>
       <div>{{ item.CM_BILL_ADDRESS1 + item.CM_BILL_ADDRESS2 }}</div>
       <div v-if="item.CM_BILL_ADDRESS3 !== 'null'">
         {{ item.CM_BILL_ADDRESS3 }}

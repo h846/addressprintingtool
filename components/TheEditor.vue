@@ -12,7 +12,7 @@
           <v-row>
             <v-col cols="4">
               <v-text-field
-                v-model="custNum"
+                v-model="custData.custNum"
                 label="顧客番号"
                 hide-details
                 required
@@ -20,7 +20,7 @@
             </v-col>
             <v-col cols="4">
               <v-text-field
-                v-model="lName"
+                v-model="custData.lName"
                 label="姓"
                 hide-details
                 required
@@ -28,7 +28,7 @@
             </v-col>
             <v-col cols="4">
               <v-text-field
-                v-model="fName"
+                v-model="custData.fName"
                 label="名"
                 hide-details
                 required
@@ -38,7 +38,7 @@
           <v-row>
             <v-col cols="2">
               <v-text-field
-                v-model="zipCode"
+                v-model="custData.zipCode"
                 label="郵便番号"
                 hide-details
                 required
@@ -46,7 +46,7 @@
             </v-col>
             <v-col cols="10">
               <v-text-field
-                v-model="add1"
+                v-model="custData.add1"
                 label="住所1"
                 hide-details
                 required
@@ -54,14 +54,14 @@
             </v-col>
             <v-col cols="6">
               <v-text-field
-                v-model="add2"
+                v-model="custData.add2"
                 label="住所2"
                 hide-details
               ></v-text-field>
             </v-col>
             <v-col cols="6">
               <v-text-field
-                v-model="add3"
+                v-model="custData.add3"
                 label="住所3"
                 hide-details
               ></v-text-field>
@@ -74,7 +74,7 @@
         <v-btn color="blue darken-1" text @click="dialog = false">
           Close
         </v-btn>
-        <v-btn color="blue darken-1" text @click="dialog = false"> Save </v-btn>
+        <v-btn color="blue darken-1" text @click="updateCust()"> Save </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -86,13 +86,15 @@ export default {
   data() {
     return {
       dialog: false,
-      custNum: '',
-      fName: '',
-      lName: '',
-      zipCode: '',
-      add1: '',
-      add2: '',
-      add3: '',
+      custData: {
+        custNum: '',
+        fName: '',
+        lName: '',
+        zipCode: '',
+        add1: '',
+        add2: '',
+        add3: '',
+      },
     }
   },
 
@@ -107,19 +109,27 @@ export default {
 
   mounted() {
     console.log(this.customer)
-    this.custNum = this.customer.CM_CUSTOMER_ID
-    this.lName = this.customer.CM_BILL_LAST
-    this.fName = this.customer.CM_BILL_FIRST
-    this.zipCode = this.customer.CM_ZIP
-    this.add1 = this.customer.CM_BILL_ADDRESS1
-    this.add2 =
+    this.custData.ID = this.customer.ACC_ID
+    this.custData.custNum = this.customer.CM_CUSTOMER_ID
+    this.custData.lName = this.customer.CM_BILL_LAST
+    this.custData.fName = this.customer.CM_BILL_FIRST
+    this.custData.zipCode = this.customer.CM_ZIP
+    this.custData.add1 = this.customer.CM_BILL_ADDRESS1
+    this.custData.add2 =
       this.customer.CM_BILL_ADDRESS2 === 'null'
         ? ''
         : this.customer.CM_BILL_ADDRESS2
-    this.add3 =
+    this.custData.add3 =
       this.customer.CM_BILL_ADDRESS3 === 'null'
         ? ''
         : this.customer.CM_BILL_ADDRESS3
+    console.log(this.custData)
+  },
+
+  methods: {
+    updateCust() {
+      this.$store.commit('updateCustomers', this.custData)
+    },
   },
 }
 </script>
