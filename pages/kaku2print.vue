@@ -2,7 +2,9 @@
   <div class="sheets">
     <div v-for="(item, index) in custList" :key="index" class="sheet">
       <div>〒{{ item.CM_ZIP }}</div>
-      <div>{{ item.CM_BILL_ADDRESS1 + item.CM_BILL_ADDRESS2 }}</div>
+      <div class="vertical">
+        {{ item.CM_BILL_ADDRESS1 + item.CM_BILL_ADDRESS2 }}
+      </div>
       <div v-if="item.CM_BILL_ADDRESS3 !== 'null'">
         {{ item.CM_BILL_ADDRESS3 }}
       </div>
@@ -88,12 +90,18 @@ export default {
   .sheets > * {
     margin: 0;
     padding: 0;
+    margin-left: auto;
   }
   .sheet {
     /* mm単位で指定しているけど、vueコンポ側はpx単位なので、無理にmmにしなくてもいいかも。解像度の違いでハマるかも */
     display: block;
     font-family: 'Sawarabi Mincho', serif;
     font-size: 14px;
+
+    .vertical {
+      -ms-writing-mode: tb-rl;
+      writing-mode: vertical-rl;
+    }
   }
 }
 

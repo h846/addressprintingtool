@@ -15,5 +15,6 @@ module.exports = {
     'no-console': 'off',
     'vue/multi-word-component-names': 'off',
     'no-extra-boolean-cast': 'off',
+    'camelcase':'off'
   },
 }

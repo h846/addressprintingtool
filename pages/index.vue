@@ -8,12 +8,12 @@
             <v-col cols="12">
               <v-textarea
                 v-model="cust_id"
-                label="顧客番号を入力してENTER"
+                label="顧客番号を入力してENTER。改行区切りで複数の番号を入力できます。"
                 outlined
                 clearable
                 :error="showError"
                 :error-messages="errMsg"
-                @keyup.enter="custSearch()"
+                @keyup.enter="custDataSplit()"
                 @keydown.enter.prevent
               ></v-textarea>
             </v-col>
@@ -53,37 +53,32 @@
         </v-card-text>
       </v-card>
     </v-col>
-    <v-col cols="6">
-      <div style="width: 200px">
-        <v-btn class="label-prt" color="red darken-2" dark to="/labelPrint" nuxt
-          >ラベル印刷</v-btn
-        >
-        <div>
-          <v-btn
-            text
-            color="primary"
-            href="http://lejnet/csapp/label-print/print_label.pdf"
-            target="_blank"
-            >印刷方法</v-btn
-          >
-        </div>
-      </div>
+    <v-col cols="４">
+      <v-btn color="red darken-2" width="200" dark to="/labelPrint" nuxt
+        >ラベル印刷</v-btn
+      >
+
+      <a href="http://lejnet/csapp/label-print/print_label.pdf" target="_blank"
+        >印刷方法</a
+      >
     </v-col>
-    <v-col cols="6">
-      <div class="ml-auto" style="width: 200px">
-        <v-btn class="form-prt" color="red darken-2" dark to="ordFormPrint" nuxt
-          >オーダーフォーム印刷</v-btn
-        >
-        <div style="text-align: left">
-          <v-btn
-            text
-            color="primary"
-            href="http://lejnet/csapp/label-print/print_orderform.pdf"
-            target="_blank"
-            >印刷方法</v-btn
-          >
-        </div>
-      </div>
+    <v-col cols="４">
+      <v-btn color="red darken-2" width="200" dark to="ordFormPrint" nuxt
+        >オーダーフォーム印刷</v-btn
+      >
+
+      <a
+        href="http://lejnet/csapp/label-print/print_orderform.pdf"
+        target="_blank"
+        >印刷方法</a
+      >
+    </v-col>
+    <v-col cols="４">
+      <v-btn color="red darken-2" width="200" dark to="kaku2print" nuxt
+        >角2封筒印刷</v-btn
+      >
+
+      <a href="" target="_blank">印刷方法</a>
     </v-col>
   </v-row>
 </template>
@@ -155,7 +150,7 @@ export default {
           })
       })
     },
-    validation(val) {
+    validation(val, custid) {
       this.showError = false
       this.errMsg = null
       if (val.data.length <= 0) {
@@ -166,26 +161,36 @@ export default {
         this.showError = true
         this.errMsg = '顧客番号を入力してください'
         return false
-      } else if (/\D+/.test(this.cust_id)) {
+      } else if (/\D+/.test(parseInt(custid))) {
         this.showError = true
         this.errMsg = '半角数字を入力してください'
         return false
       }
     },
-    async custSearch() {
+    custDataSplit() {
+      const ary = this.cust_id.split(/\n/)
+
+      for (const i of ary) {
+        this.custSearch(i)
+      }
+    },
+    async custSearch(custNum) {
+      const cust_id = parseInt(custNum)
+
       this.showTable = true
       this.$store.commit('toggleLoading', true)
       // Customer Search and add Add to DB
       await axios
         .post('http://lejnet/api/oracle/customer', {
-          cust_id: this.cust_id,
+          cust_id,
         })
         .then((res) => {
           // Form Varidation
-          if (this.validation(res) === false) {
+          if (this.validation(res, cust_id) === false) {
             this.$store.commit('toggleLoading', false)
             return
           }
+          console.log(res.data)
           const cust = res.data[0]
           const custHash = {}
           custHash.CUST_NUM = this.trim(cust.CM_CUSTOMER_ID)
@@ -268,5 +273,13 @@ export default {
   .form-prt {
     display: none !important;
   }
+}
+
+a {
+  display: inline-block;
+  text-decoration: none;
+  margin-top: 2px;
+  font-size: 1rem;
+  font-weight: bold;
 }
 </style>
