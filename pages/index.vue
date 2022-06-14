@@ -6,7 +6,7 @@
         <v-card-text>
           <v-row justify="center">
             <v-col cols="12">
-              <v-text-field
+              <v-textarea
                 v-model="cust_id"
                 label="顧客番号を入力してENTER"
                 outlined
@@ -14,7 +14,8 @@
                 :error="showError"
                 :error-messages="errMsg"
                 @keyup.enter="custSearch()"
-              ></v-text-field>
+                @keydown.enter.prevent
+              ></v-textarea>
             </v-col>
           </v-row>
           <v-row justify="center">
