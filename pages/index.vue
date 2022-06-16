@@ -55,7 +55,7 @@
     </v-col>
     <v-col cols="４">
       <v-btn color="red darken-2" width="200" dark to="/labelPrint" nuxt
-        >ラベル印刷</v-btn
+        >封筒ラベル印刷</v-btn
       >
 
       <a href="http://lejnet/csapp/label-print/print_label.pdf" target="_blank"
