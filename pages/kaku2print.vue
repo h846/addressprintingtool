@@ -255,10 +255,6 @@ export default {
   font-size: 24px;
 }
 
-@page {
-  size: 240mm 332mm;
-}
-
 @media print {
   .sheets > :not(.sheet) {
     display: none;
