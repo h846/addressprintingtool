@@ -73,7 +73,8 @@
         >印刷方法</a
       >
     </v-col>
-    <v-col cols="４">
+    <!-- 角２封筒作成中のため非表示中ですよ-->
+    <v-col v-if="false" cols="４">
       <v-btn color="red darken-2" width="200" dark to="kaku2print" nuxt
         >角2封筒印刷</v-btn
       >
